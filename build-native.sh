@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-scriptPath="`dirname \"$0\"`"
-cimguiPath=$scriptPath/cimgui
+scriptPath="$(dirname "$0")"
+cimguiPath="$scriptPath/cimgui"
+cimplotPath="$scriptPath/cimplot"
 
 _CMakeBuildType=Debug
 _CMakeOsxArchitectures=
@@ -30,8 +31,14 @@ while :; do
     shift
 done
 
-mkdir -p $cimguiPath/build/$_CMakeBuildType
-pushd $cimguiPath/build/$_CMakeBuildType
-cmake ../.. -DCMAKE_OSX_ARCHITECTURES="$_CMakeOsxArchitectures" -DCMAKE_OSX_DEPLOYMENT_TARGET=10.13 -DCMAKE_BUILD_TYPE=$_CMakeBuildType
-make
-popd
+build_project() {
+    local projectPath=$1
+    mkdir -p "$projectPath/build/$_CMakeBuildType"
+    pushd "$projectPath/build/$_CMakeBuildType"
+    cmake ../.. -DCMAKE_OSX_ARCHITECTURES="$_CMakeOsxArchitectures" -DCMAKE_OSX_DEPLOYMENT_TARGET=10.13 -DCMAKE_BUILD_TYPE=$_CMakeBuildType
+    make
+    popd
+}
+
+build_project "$cimguiPath"
+build_project "$cimplotPath"
