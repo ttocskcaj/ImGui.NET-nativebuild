@@ -149,11 +149,13 @@ jobs:
           mv JsonFiles/cimgui/*.json cimgui/
           mv JsonFiles/cimplot/*.json cimplot/
 
+      - name: Tag Name
+        run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+
       - name: Gzip artifacts
         run: |
-          echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
-          tar -czvf cimgui-${TAG_NAME}.tar.gz cimgui/
-          tar -czvf cimplot-${TAG_NAME}.tar.gz cimplot/
+          tar -czvf cimgui-${{ env.TAG_NAME }}.tar.gz cimgui/
+          tar -czvf cimplot-${{ env.TAG_NAME }}.tar.gz cimplot/
 
       - name: Release
         uses: softprops/action-gh-release@v1
