@@ -151,7 +151,7 @@ jobs:
 
       - name: Gzip artifacts
         run: |
-          TAG_NAME=${GITHUB_REF#refs/tags/}
+          echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
           tar -czvf cimgui-${TAG_NAME}.tar.gz cimgui/
           tar -czvf cimplot-${TAG_NAME}.tar.gz cimplot/
 
