@@ -25,16 +25,16 @@ jobs:
     strategy:
       matrix:
         include:
-          # - os: macos-latest
-          # - os: ubuntu-latest
+          - os: macos-latest
+          - os: ubuntu-latest
           - os: windows-latest
             architecture: x64
-          # - os: windows-latest
-          #   architecture: x86
-          # - os: windows-latest
-          #   architecture: ARM64
-          # - os: windows-latest
-          #   architecture: ARM
+          - os: windows-latest
+            architecture: x86
+          - os: windows-latest
+            architecture: ARM64
+          - os: windows-latest
+            architecture: ARM
 
     steps:
       - uses: actions/checkout@v4
@@ -135,16 +135,16 @@ jobs:
       - name: Download Artifacts
         uses: actions/download-artifact@v3
 
-      - name: Rename win-x64 and win-x86 artifacts
+      - name: Move and rename windows artifacts
         run: |
-          mv win-x64/cimgui.dll win-x64/cimgui.win-x64.dll
-          mv win-x86/cimgui.dll win-x86/cimgui.win-x86.dll
-          mv win-ARM64/cimgui.dll win-ARM64/cimgui.win-arm64.dll
-          mv win-ARM/cimgui.dll win-ARM/cimgui.win-arm.dll
-          mv win-x64/cimplot.dll win-x64/cimplot.win-x64.dll
-          mv win-x86/cimplot.dll win-x86/cimplot.win-x86.dll
-          mv win-ARM64/cimplot.dll win-ARM64/cimplot.win-arm64.dll
-          mv win-ARM/cimplot.dll win-ARM/cimplot.win-arm.dll
+          mv win-x64/cimgui/build/x64/Release/cimgui.dll win-x64/cimgui.win-x64.dll
+          mv win-x86/cimgui/build/x86/Release/cimgui.dll win-x86/cimgui.win-x86.dll
+          mv win-ARM64/cimgui/build/ARM64/Release/cimgui.dll win-ARM64/cimgui.win-arm64.dll
+          mv win-ARM/cimgui/build/ARM/Release/cimgui.dll win-ARM/cimgui.win-arm.dll
+          mv win-x64/cimplot/build/x64/Release/cimplot.dll win-x64/cimplot.win-x64.dll
+          mv win-x86/cimplot/build/x86/Release/cimplot.dll win-x86/cimplot.win-x86.dll
+          mv win-ARM64/cimplot/build/ARM64/Release/cimplot.dll win-ARM64/cimplot.win-arm64.dll
+          mv win-ARM/cimplot/build/ARM/Release/cimplot.dll win-ARM/cimplot.win-arm.dll
 
       - name: Release
         uses: softprops/action-gh-release@v1
