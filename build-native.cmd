@@ -1,15 +1,14 @@
 @setlocal
 @echo off
 
-set CIMGUI_ROOT=%~dp0cimgui
-set CIMPLOT_ROOT=%~dp0cimplot
+set BUILD_ROOT=%~dp0
 set BUILD_CONFIG=Debug
 set BUILD_ARCH=x64
 set BUILD_CMAKE_GENERATOR_PLATFORM=x64
 set MSVC_RUNTIME="MultiThreadedDebug"
 
 :ArgLoop
-if [%1] == [] goto BuildAll
+if [%1] == [] goto Build
 if /i [%1] == [Release] (set BUILD_CONFIG=Release && set MSVC_RUNTIME=MultiThreaded && shift & goto ArgLoop)
 if /i [%1] == [Debug] (set BUILD_CONFIG=Debug && set MSVC_RUNTIME=MultiThreadedDebug && shift & goto ArgLoop)
 if /i [%1] == [x64] (set BUILD_ARCH=x64 && shift & goto ArgLoop)
@@ -19,13 +18,8 @@ if /i [%1] == [x86] (set BUILD_ARCH=x86 && set BUILD_CMAKE_GENERATOR_PLATFORM=Wi
 shift
 goto ArgLoop
 
-:BuildAll
-call :BuildProject %CIMGUI_ROOT%
-call :BuildProject %CIMPLOT_ROOT%
-goto Success
-
-:BuildProject
-pushd %1
+:Build
+pushd %BUILD_ROOT%
 If NOT exist ".\build\%BUILD_ARCH%" (
   mkdir build\%BUILD_ARCH%
 )

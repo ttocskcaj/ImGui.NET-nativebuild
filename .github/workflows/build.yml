@@ -86,46 +86,31 @@ jobs:
         if: matrix.os == 'windows-latest'
         with:
           name: win-${{ matrix.architecture }}
-          path: |
-            cimgui\build\${{ matrix.architecture }}\${{ github.event.inputs.ReleaseType || 'Release' }}\*
-            cimplot\build\${{ matrix.architecture }}\${{ github.event.inputs.ReleaseType || 'Release' }}\*
+          path: build\${{ matrix.architecture }}\${{ github.event.inputs.ReleaseType || 'Release' }}\*
 
       - name: Upload ${{ matrix.os }} ${{ github.event.inputs.ReleaseType || 'Release' }}
         uses: actions/upload-artifact@v3
         if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
         with:
           name: ${{ matrix.os }}-x64
-          path: |
-            cimgui/build/${{ github.event.inputs.ReleaseType || 'Release' }}/*
-            cimplot/build/${{ github.event.inputs.ReleaseType || 'Release' }}/*
+          path: build/${{ github.event.inputs.ReleaseType || 'Release' }}/*
 
-      - name: Upload Definitions Json File ImGUI
+      - name: Prepare JSON Files
+        shell: bash
+        run: |
+          mkdir -p JsonFiles/imgui JsonFiles/implot
+          cp cimgui/generator/output/structs_and_enums.json JsonFiles/imgui/
+          cp cimgui/generator/output/definitions.json JsonFiles/imgui/
+          cp cimplot/generator/output/structs_and_enums.json JsonFiles/implot/
+          cp cimplot/generator/output/definitions.json JsonFiles/implot/
+        if: matrix.os == 'windows-latest' && matrix.architecture == 'x64'
+
+      - name: Upload JsonFiles
         uses: actions/upload-artifact@v3
         if: matrix.os == 'windows-latest' && matrix.architecture == 'x64'
         with:
-          name: JsonFiles-ImGUI
-          path: cimgui\generator\output\definitions.json
-
-      - name: Upload structs_and_enums Json File ImGUI
-        uses: actions/upload-artifact@v3
-        if: matrix.os == 'windows-latest' && matrix.architecture == 'x64'
-        with:
-          name: JsonFiles-ImGUI
-          path: cimgui\generator\output\structs_and_enums.json
-
-      - name: Upload Definitions Json File ImPlot
-        uses: actions/upload-artifact@v3
-        if: matrix.os == 'windows-latest' && matrix.architecture == 'x64'
-        with:
-          name: JsonFiles-ImPlot
-          path: cimplot\generator\output\definitions.json
-
-      - name: Upload structs_and_enums Json File ImPlot
-        uses: actions/upload-artifact@v3
-        if: matrix.os == 'windows-latest' && matrix.architecture == 'x64'
-        with:
-          name: JsonFiles-ImPlot
-          path: cimplot\generator\output\structs_and_enums.json
+          name: JsonFiles
+          path: JsonFiles/
 
   CreateReleaseOnTagCreate:
     runs-on: ubuntu-latest
@@ -135,32 +120,35 @@ jobs:
       - name: Download Artifacts
         uses: actions/download-artifact@v3
 
-      - name: Move and rename windows artifacts
+      - name: Move and rename artifacts
         run: |
-          mv win-x64/cimgui/build/x64/Release/cimgui.dll win-x64/cimgui.win-x64.dll
-          mv win-x86/cimgui/build/x86/Release/cimgui.dll win-x86/cimgui.win-x86.dll
-          mv win-ARM64/cimgui/build/ARM64/Release/cimgui.dll win-ARM64/cimgui.win-arm64.dll
-          mv win-ARM/cimgui/build/ARM/Release/cimgui.dll win-ARM/cimgui.win-arm.dll
-          mv win-x64/cimplot/build/x64/Release/cimplot.dll win-x64/cimplot.win-x64.dll
-          mv win-x86/cimplot/build/x86/Release/cimplot.dll win-x86/cimplot.win-x86.dll
-          mv win-ARM64/cimplot/build/ARM64/Release/cimplot.dll win-ARM64/cimplot.win-arm64.dll
-          mv win-ARM/cimplot/build/ARM/Release/cimplot.dll win-ARM/cimplot.win-arm.dll
+          mv win-x64/build/x64/Release/cimgui.dll win-x64/cimgui.win-x64.dll
+          mv win-x86/build/x86/Release/cimgui.dll win-x86/cimgui.win-x86.dll
+          mv win-ARM64/build/ARM64/Release/cimgui.dll win-ARM64/cimgui.win-arm64.dll
+          mv win-ARM/build/ARM/Release/cimgui.dll win-ARM/cimgui.win-arm.dll
+          mv win-x64/build/x64/Release/cimplot.dll win-x64/cimplot.win-x64.dll
+          mv win-x86/build/x86/Release/cimplot.dll win-x86/cimplot.win-x86.dll
+          mv win-ARM64/build/ARM64/Release/cimplot.dll win-ARM64/cimplot.win-arm64.dll
+          mv win-ARM/build/ARM/Release/cimplot.dll win-ARM/cimplot.win-arm.dll
+
+          mv ubuntu-latest-x64/build/x64/Release/*.so ubuntu-latest-x64/
+          mv macos-latest-x64/build/x64/Release/*.dylib macos-latest-x64/
+
+          ls win-x64/
+          ls win-x86/
+          ls win-ARM64/
+          ls win-ARM/
+          ls ubuntu-latest-x64/
+          ls macos-latest-x64/
 
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            win-x64/cimgui.win-x64.dll
-            win-x86/cimgui.win-x86.dll
-            win-ARM64/cimgui.win-arm64.dll
-            win-ARM/cimgui.win-arm.dll
-            JsonFiles-ImGUI/*
-            ubuntu-latest-x64/cimgui.so
-            macos-latest-x64/cimgui.dylib
-            win-x64/cimplot.win-x64.dll
-            win-x86/cimplot.win-x86.dll
-            win-ARM64/cimplot.win-arm64.dll
-            win-ARM/cimplot.win-arm.dll
-            JsonFiles-ImPlot/*
-            ubuntu-latest-x64/cimplot.so
-            macos-latest-x64/cimplot.dylib
+            win-x64/*.dll
+            win-x86/*.dll
+            win-ARM64/*.dll
+            win-ARM/*.dll
+            ubuntu-latest-x64/*.so
+            macos-latest-x64/*.dylib
+            JsonFiles/*

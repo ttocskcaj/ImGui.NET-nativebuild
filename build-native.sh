@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
 scriptPath="$(dirname "$0")"
-cimguiPath="$scriptPath/cimgui"
-cimplotPath="$scriptPath/cimplot"
+buildPath="$scriptPath"
 
 _CMakeBuildType=Debug
 _CMakeOsxArchitectures=
@@ -40,5 +39,4 @@ build_project() {
     popd
 }
 
-build_project "$cimguiPath"
-build_project "$cimplotPath"
+build_project "$buildPath"
