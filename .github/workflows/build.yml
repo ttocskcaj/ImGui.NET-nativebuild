@@ -120,26 +120,19 @@ jobs:
       - name: Download Artifacts
         uses: actions/download-artifact@v3
 
-      - name: Move and rename artifacts
+      - name: Move and rename windows artifacts
         run: |
-          mv win-x64/build/x64/Release/cimgui.dll win-x64/cimgui.win-x64.dll
-          mv win-x86/build/x86/Release/cimgui.dll win-x86/cimgui.win-x86.dll
-          mv win-ARM64/build/ARM64/Release/cimgui.dll win-ARM64/cimgui.win-arm64.dll
-          mv win-ARM/build/ARM/Release/cimgui.dll win-ARM/cimgui.win-arm.dll
-          mv win-x64/build/x64/Release/cimplot.dll win-x64/cimplot.win-x64.dll
-          mv win-x86/build/x86/Release/cimplot.dll win-x86/cimplot.win-x86.dll
-          mv win-ARM64/build/ARM64/Release/cimplot.dll win-ARM64/cimplot.win-arm64.dll
-          mv win-ARM/build/ARM/Release/cimplot.dll win-ARM/cimplot.win-arm.dll
+          mv win-x64/cimgui.dll win-x64/cimgui.win-x64.dll
+          mv win-x64/cimplot.dll win-x64/cimplot.win-x64.dll
 
-          mv ubuntu-latest-x64/build/Release/*.so ubuntu-latest-x64/
-          mv macos-latest-x64/build/Release/*.dylib macos-latest-x64/
+          mv win-x86/cimgui.dll win-x86/cimgui.win-x86.dll
+          mv win-x86/cimplot.dll win-x86/cimplot.win-x86.dll
 
-          ls win-x64/
-          ls win-x86/
-          ls win-ARM64/
-          ls win-ARM/
-          ls ubuntu-latest-x64/
-          ls macos-latest-x64/
+          mv win-ARM64/cimgui.dll win-ARM64/cimgui.win-arm64.dll
+          mv win-ARM64/cimplot.dll win-ARM64/cimplot.win-arm64.dll
+
+          mv win-ARM/cimgui.dll win-ARM/cimgui.win-arm.dll
+          mv win-ARM/cimplot.dll win-ARM/cimplot.win-arm.dll
 
       - name: Release
         uses: softprops/action-gh-release@v1
