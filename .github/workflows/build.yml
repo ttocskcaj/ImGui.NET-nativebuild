@@ -143,8 +143,8 @@ jobs:
           mv macos-latest-x64/cimplot.dylib cimplot/osx/cimplot.dylib
 
           mkdir -p cimgui/linux-x64 cimplot/linux-x64
-          mv ubuntu-latest-x64/cimgui.dll cimgui/linux-x64/cimgui.so
-          mv ubuntu-latest-x64/cimplot.dll cimplot/linux-x64/cimplot.so
+          mv ubuntu-latest-x64/cimgui.so cimgui/linux-x64/cimgui.so
+          mv ubuntu-latest-x64/cimplot.so cimplot/linux-x64/cimplot.so
 
           mv JsonFiles/cimgui/*.json cimgui/
           mv JsonFiles/cimplot/*.json cimplot/
