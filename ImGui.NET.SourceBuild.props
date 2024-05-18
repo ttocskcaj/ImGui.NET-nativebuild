@@ -11,6 +11,12 @@
     <NativeFileReference Include="$(_ImGuiSourceBuildPkg)imgui/imgui_draw.cpp" />
     <NativeFileReference Include="$(_ImGuiSourceBuildPkg)imgui/imgui_tables.cpp" />
     <NativeFileReference Include="$(_ImGuiSourceBuildPkg)imgui/imgui_widgets.cpp" />
+
+    <NativeFileReference Include="$(_ImGuiSourceBuildPkg)cimplot.cpp" />
+    <NativeFileReference Include="$(_ImGuiSourceBuildPkg)implot/implot_demo.cpp" />
+    <NativeFileReference Include="$(_ImGuiSourceBuildPkg)implot/implot_items.cpp" />
+    <NativeFileReference Include="$(_ImGuiSourceBuildPkg)implot/implot.cpp" />
+
   </ItemGroup>
 
 </Project>
