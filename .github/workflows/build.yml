@@ -131,8 +131,8 @@ jobs:
           mv win-ARM64/build/ARM64/Release/cimplot.dll win-ARM64/cimplot.win-arm64.dll
           mv win-ARM/build/ARM/Release/cimplot.dll win-ARM/cimplot.win-arm.dll
 
-          mv ubuntu-latest-x64/build/x64/Release/*.so ubuntu-latest-x64/
-          mv macos-latest-x64/build/x64/Release/*.dylib macos-latest-x64/
+          mv ubuntu-latest-x64/build/Release/*.so ubuntu-latest-x64/
+          mv macos-latest-x64/build/Release/*.dylib macos-latest-x64/
 
           ls win-x64/
           ls win-x86/
