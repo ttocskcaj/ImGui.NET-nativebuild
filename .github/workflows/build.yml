@@ -54,7 +54,7 @@ jobs:
         shell: bash
 
       - name: Upload source package
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: matrix.os == 'windows-latest' && matrix.architecture == 'x64'
         with:
           name: win-x64
@@ -82,14 +82,14 @@ jobs:
         shell: bash
 
       - name: Upload win-${{ matrix.architecture }} ${{ github.event.inputs.ReleaseType || 'Release' }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: matrix.os == 'windows-latest'
         with:
           name: win-${{ matrix.architecture }}
           path: build\${{ matrix.architecture }}\${{ github.event.inputs.ReleaseType || 'Release' }}\*
 
       - name: Upload ${{ matrix.os }} ${{ github.event.inputs.ReleaseType || 'Release' }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
         with:
           name: ${{ matrix.os }}-x64
@@ -98,15 +98,15 @@ jobs:
       - name: Prepare JSON Files
         shell: bash
         run: |
-          mkdir -p JsonFiles/imgui JsonFiles/implot
-          cp cimgui/generator/output/structs_and_enums.json JsonFiles/imgui/
-          cp cimgui/generator/output/definitions.json JsonFiles/imgui/
-          cp cimplot/generator/output/structs_and_enums.json JsonFiles/implot/
-          cp cimplot/generator/output/definitions.json JsonFiles/implot/
+          mkdir -p JsonFiles/cimgui JsonFiles/cimplot
+          cp cimgui/generator/output/structs_and_enums.json JsonFiles/cimgui/
+          cp cimgui/generator/output/definitions.json JsonFiles/cimgui/
+          cp cimplot/generator/output/structs_and_enums.json JsonFiles/cimplot/
+          cp cimplot/generator/output/definitions.json JsonFiles/cimplot/
         if: matrix.os == 'windows-latest' && matrix.architecture == 'x64'
 
       - name: Upload JsonFiles
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: matrix.os == 'windows-latest' && matrix.architecture == 'x64'
         with:
           name: JsonFiles
@@ -118,30 +118,46 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/')
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
 
-      - name: Move and rename windows artifacts
+      - name: Prepare Artifacts
         run: |
-          mv win-x64/cimgui.dll win-x64/cimgui.win-x64.dll
-          mv win-x64/cimplot.dll win-x64/cimplot.win-x64.dll
+          mkdir -p cimgui/win-x64 cimplot/win-x64
+          mv win-x64/cimgui.dll cimgui/win-x64/cimgui.dll
+          mv win-x64/cimplot.dll cimplot/win-x64/cimplot.dll
+  
+          mkdir -p cimgui/win-x86 cimplot/win-x86
+          mv win-x86/cimgui.dll cimgui/win-x86/cimgui.dll
+          mv win-x86/cimplot.dll cimplot/win-x86/cimplot.dll
+  
+          mkdir -p cimgui/win-arm64 cimplot/win-arm64
+          mv win-ARM64/cimgui.dll cimgui/win-arm64/cimgui.dll
+          mv win-ARM64/cimplot.dll cimplot/win-arm64/cimplot.dll
+  
+          mkdir -p cimgui/win-arm cimplot/win-arm
+          mv win-ARM/cimgui.dll cimgui/win-arm/cimgui.dll
+          mv win-ARM/cimplot.dll cimplot/win-arm/cimplot.dll
 
-          mv win-x86/cimgui.dll win-x86/cimgui.win-x86.dll
-          mv win-x86/cimplot.dll win-x86/cimplot.win-x86.dll
+          mkdir -p cimgui/osx cimplot/osx
+          mv macos-latest-x64/cimgui.dylib cimgui/osx/cimgui.dylib
+          mv macos-latest-x64/cimplot.dylib cimplot/osx/cimplot.dylib
 
-          mv win-ARM64/cimgui.dll win-ARM64/cimgui.win-arm64.dll
-          mv win-ARM64/cimplot.dll win-ARM64/cimplot.win-arm64.dll
+          mkdir -p cimgui/linux-x64 cimplot/linux-x64
+          mv ubuntu-latest-x64/cimgui.dll cimgui/linux-x64/cimgui.so
+          mv ubuntu-latest-x64/cimplot.dll cimplot/linux-x64/cimplot.so
 
-          mv win-ARM/cimgui.dll win-ARM/cimgui.win-arm.dll
-          mv win-ARM/cimplot.dll win-ARM/cimplot.win-arm.dll
+          mv JsonFiles/cimgui/*.json cimgui/
+          mv JsonFiles/cimplot/*.json cimplot/
+
+      - name: Gzip artifacts
+        run: |
+          TAG_NAME=${GITHUB_REF#refs/tags/}
+          tar -czvf cimgui-${TAG_NAME}.tar.gz cimgui/
+          tar -czvf cimplot-${TAG_NAME}.tar.gz cimplot/
 
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            win-x64/*.dll
-            win-x86/*.dll
-            win-ARM64/*.dll
-            win-ARM/*.dll
-            ubuntu-latest-x64/*.so
-            macos-latest-x64/*.dylib
-            JsonFiles/*
+            cimgui-${{ env.TAG_NAME }}.tar.gz
+            cimplot-${{ env.TAG_NAME }}.tar.gz
